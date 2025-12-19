@@ -1,0 +1,37 @@
+import torch
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Using device:", device)
+
+
+from PIL import Image
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Emotion labels (FER2013)
+classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+
+# Load image
+img = Image.open("angry.jpg").convert("L")
+img = img.resize((48, 48))
+
+# Show image
+plt.imshow(img, cmap='gray')
+plt.title("Input Image")
+plt.axis('off')
+plt.show()
+
+# Preprocess
+img = np.array(img) / 255.0
+img = torch.tensor(img, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+img = (img - 0.5) / 0.5
+img = img.to(device)
+
+# Predict
+model.eval()
+with torch.no_grad():
+    output = model(img)
+    prediction = torch.argmax(output, dim=1)
+
+print("Predicted Emotion:", classes[prediction.item()])
+
